@@ -1,9 +1,62 @@
 //global variables
 var database = firebase.database()
-database.set({
-	playerList: [],
+// database.set({
+// 	playerList: [],
 
-})
+// })
+
+function initApp() {
+    // Listening for auth state changes.
+    // [START authstatelistener]
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            var isAnonymous = user.isAnonymous
+            var uid = user.uid
+            // [START_EXCLUDE]
+            document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+            $('#signIn').html('Sign out')
+            document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+            // [END_EXCLUDE]
+        } else {
+            // User is signed out.
+            // [START_EXCLUDE]
+            document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+            $('#signIn').html('Sign in')
+            document.getElementById('quickstart-account-details').textContent = 'null';
+            // [END_EXCLUDE]
+        }
+        // [START_EXCLUDE]
+        document.getElementById('signIn').disabled = false;
+        // [END_EXCLUDE]
+    });
+      // [END authstatelistener]
+      document.getElementById('signIn').addEventListener('click', toggleSignIn, false);
+}
+
+function toggleSignIn() {
+	if (firebase.auth().currentUser) {
+		// [START signout]
+		firebase.auth().signOut();
+		// [END signout]
+	} else {
+		// [START authanon]
+		firebase.auth().signInAnonymously().catch(function(error) {
+			// Handle Errors here.
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			// [START_EXCLUDE]
+			if (errorCode === 'auth/operation-not-allowed') {
+				alert('You must enable Anonymous auth in the Firebase Console.');
+			} else {
+				console.error(error);
+			}
+			// [END_EXCLUDE]
+		});
+		// [END authanon]
+	}
+	document.getElementById('signIn').disabled = true;
+}
 
 //game object
 var game = {
@@ -65,9 +118,13 @@ var game = {
 }
 
 
-
+window.onload = function() {
+    initApp()
+ }
 
 $(document).ready(function() {
-	$('button').on('click', game.getInput(event) {
-	}	  
+	$('.input').on('click', game.getInput(event))
+	$('#signIn').on('click', function(event) {
+
+	})  
 })
