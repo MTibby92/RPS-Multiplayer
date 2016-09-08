@@ -1,5 +1,9 @@
 var database = firebase.database()
 
+var user = undefined
+var player = 'player'
+currentPlayer = ''
+var count = 1
 
 function checkWhoWon(player1, player2) {
 	if (player2 == "Rock"){
@@ -47,12 +51,45 @@ function checkWhoWon(player1, player2) {
 	}
 }
 
+// firebase.database().ref().on('child_added', function(childSnapshot, prevChildKey) {
+// 	console.log(childSnapshot.val())
+// 	//console.log(childSnapshot.val().name)
+// 	console.log(childSnapshot.child('player1').exists())
+// 	console.log(childSnapshot.child('player1').val())
+// })
 
-firebase.database().ref().on('value', function(snapshot) {})
+// ============ LOGS HOW MANY PLAYERS THERE ARE ============
+firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
+	console.log('Number of players in database: ' + childSnapshot.child('players').numChildren())
+})
+
+// ============ LOGS VALUES OF PLAYER INPUTS ============
+firebase.database().ref('players').on('child_added', function(childSnapshot, prevChildKey) {
+	console.log(childSnapshot.val())
+	console.log(childSnapshot.val().name)
+})
+
 
 $(document).ready(function() {
-	$('.input1').prop('disabled', true)
-	$('.input2').prop('disabled', true)
+	$('.input').prop('disabled', true)
+
+
+	$('#addUser').on('click', function(event) {
+		user = $('#userName').val()
+		console.log('User is: ' + user)
+		$('#userName').val('')
+
+		currentPlayer = player.concat(count)
+		count++
+
+		database.ref('players/' + currentPlayer).update({
+			"name": user,
+			"wins": 0,
+			"loses": 0
+		})
+	})
+
+
 	$('.input').on('click', function(event) {
 		var input = $(event.target).html()
 		console.log(input)
