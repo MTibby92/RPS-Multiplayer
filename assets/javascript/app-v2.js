@@ -51,7 +51,8 @@ function checkWhoWon(player1, player2) {
 firebase.database().ref().on('value', function(snapshot) {})
 
 $(document).ready(function() {
-	$('.input').prop('disabled', true)
+	$('.input1').prop('disabled', true)
+	$('.input2').prop('disabled', true)
 	$('.input').on('click', function(event) {
 		var input = $(event.target).html()
 		console.log(input)

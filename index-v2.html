@@ -14,12 +14,23 @@
 <body>
 
 <div class="container-fluid">
-	<div class="header text-center">
-		<h1>Rock Paper Scissors - Multiplayer Edition</h1>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="header text-center">
+				<h1>Rock Paper Scissors - Multiplayer Edition</h1>
+			</div>
+		</div>
 	</div>
-	<!-- <div class="text-right">
-		<button class="btn btn-default" id="signIn">Sign-In</button>
-	</div> -->
+	<div class="row">
+		<div class="col-md-4" id="nameInputDiv">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Enter your name">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">Join the Game</button>
+				</span>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="container">
@@ -28,14 +39,22 @@
 			<div class="col-md-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Panel title</h3>
+						<h3 class="panel-title" id="player1Name">Panel title</h3>
 					</div>
 					<div class="panel-body">
-						Panel content
-						<div class="text-center">
-							<button class="btn btn-primary btn-lg input">Rock</button>
-							<button class="btn btn-primary btn-lg input">Paper</button>
-							<button class="btn btn-primary btn-lg input">Scissors</button>
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<button class="btn btn-primary btn-lg input1">Rock</button>
+								<button class="btn btn-primary btn-lg input1">Paper</button>
+								<button class="btn btn-primary btn-lg input1">Scissors</button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="text-center" id="record1">
+									<p><span>Wins: 0</span><span> </span><span>Loses: 0</span></p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -43,9 +62,9 @@
 			<div class="col-md-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title text-center"><strong>Your Turn/Waiting for User</strong></h3>
+						<h3 class="panel-title text-center" id="game Status"><strong>Your Turn/Waiting for User</strong></h3>
 					</div>
-					<div class="panel-body text-center">
+					<div class="panel-body text-center" id="winner">
 						<p>Winner!</p>
 					</div>
 				</div>
@@ -53,14 +72,22 @@
 			<div class="col-md-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Panel title</h3>
+						<h3 class="panel-title" id="player2Name">Panel title</h3>
 					</div>
 					<div class="panel-body">
-						Panel content
-						<div class="text-center">
-							<button class="btn btn-primary btn-lg input">Rock</button>
-							<button class="btn btn-primary btn-lg input">Paper</button>
-							<button class="btn btn-primary btn-lg input">Scissors</button>
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<button class="btn btn-primary btn-lg input2">Rock</button>
+								<button class="btn btn-primary btn-lg input2">Paper</button>
+								<button class="btn btn-primary btn-lg input2">Scissors</button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="text-center" id="record2">
+									<p><span>Wins: 0</span><span> </span><span>Loses: 0</span></p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
