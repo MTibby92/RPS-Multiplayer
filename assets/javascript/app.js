@@ -1,24 +1,11 @@
 //global variables
 var database = firebase.database()
-database.ref().set({
-	player1Present: false,
-	player2Present: false,
-	player1ID: null,
-	player2ID: null,
-	player1Selection: null,
-	player2Selection: null,
-	player1Wins: 0,
-	player1Ties: 0,
-	player1Losses: 0,
-	player2Wins: 0,
-	player2Ties: 0,
-	player2Losses: 0
-})
 
 var player1Boolean = false
 var player2Boolean = false
 
-// var playerSelectionLocal = undefined
+var player1SelectionDatabase = null
+var player2SelectionDatabase = null
 
 function initApp() {
     // Listening for auth state changes.
@@ -149,31 +136,47 @@ firebase.database().ref().on('value', function(snapshot) {
 	player1Boolean = snapshot.child('player1Present').val()
 	player2Boolean = snapshot.child('player2Present').val()
 
+	player1SelectionDatabase = snapshot.child('player1Selection').val()
+	player1SelectionDatabase = snapshot.child('player2Selection').val()
+
+	console.log('In database check, player1SelectionDatabase is ' + player1SelectionDatabase)
+	console.log('In database check, player2SelectionDatabase is ' + player2SelectionDatabase)
+
+	//============= CHECKS IF BOTH PLAYERS SIGNED IN =============================
 	if (snapshot.child("player1Present").val() == true && snapshot.child("player2Present").val() == true) {
 		console.log('Game ready to be played!')
 		$('.input').prop('disabled', false)
 
-		$('.input').on('click', function(event) {
-			var input = $(event.target).html()
-			console.log(input)
+		// // =============START CLICK FUNCTION =============
+		// $('.input').on('click', function(event) {
+		// 	var input = $(event.target).html()
+		// 	console.log(input)
 
+			// ============= SAVES PLAYER 1 SELECTION =============
 			if (!snapshot.child('player1Selection').exists()) {
 				console.log('Updating player1Selection to input because it has no value yet')
 				database.ref().update({
 					"player1Selection": input
 				})
+
+			// ============= SAVES PLAYER 2 SELECTION IF PLAYER 1 HAS SELECTED =============
 			} else if (snapshot.child('player1Selection').exists() && !snapshot.child('player2Selection').exists()) {
 				console.log('Updating player2Selection to input because it has no value yet but selection 1 does')
 				database.ref().update({
 					"player2Selection": input
 				})
+
+			// ============= BOTH PLAYERS HAVE SAVED SELECTIONS =============
 			} else {
 				console.log('Both players have made their selection and stored it in the database')
 			}
-		})
+		//})
 
+	// ============= CHECKS IF ONE PLAYER SIGNED IN =============
 	} else if (snapshot.child("player1Present").val() == true && snapshot.child('player2Present').val() == false) {
 		console.log('Waiting on player 2')
+
+	// ============= NO PLAYERS SIGNED IN =============
 	} else {
 		console.log('Waiting on 2 players to join')
 	}
@@ -214,12 +217,19 @@ window.onload = function() {
 
 $(document).ready(function() {
 	$('.input').prop('disabled', true)
-	// $('.input').on('click', function(event) {
-	// 	var input = $(event.target).html()
-	// 	console.log(input)
-	// 	input = playerSelectionLocal
-
-
-	// })
+	$('.input').on('click', function(event) {
+		var input = $(event.target).html()
+		console.log(input)
+		
+		if (player1SelectionDatabase == null && player2SelectionDatabase == null) {
+			console.log('ON CLICK FUNCTION: Player 1 choice not saved; saving player 1')
+			player1SelectionDatabase = input
+		} else if (player1SelectionDatabase != null && player2SelectionDatabase == null) {
+			console.log('ON CLICK FUNCTION: Player 1 choice saved, not player 2; saving player 2')
+			player2SelectionDatabase = input
+		} else if (player1SelectionDatabase != null && player2SelectionDatabase != null) {
+			console.log('ON CLICK FUNCTION: Both selections have been saved to the database; did not write selection')
+		}
+	})
 	// $('#signIn').on('click', function(event) {})  
 });
