@@ -6,6 +6,10 @@ currentPlayer = ''
 var count = 1
 var numPlayers = 0
 var input = undefined
+var firstPlayer = undefined
+var secondPlayer = undefined
+
+var yourPlayer = undefined
 
 function checkWhoWon(player1, player2) {
 	if (player2 == "Rock"){
@@ -53,18 +57,36 @@ function checkWhoWon(player1, player2) {
 	}
 }
 
-// firebase.database().ref().on('child_added', function(childSnapshot, prevChildKey) {
-// 	console.log(childSnapshot.val())
-// 	//console.log(childSnapshot.val().name)
-// 	console.log(childSnapshot.child('player1').exists())
-// 	console.log(childSnapshot.child('player1').val())
-// })
+
 
 // ============ LOGS HOW MANY PLAYERS THERE ARE ============
 firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	console.log('Number of players in database: ' + childSnapshot.child('players').numChildren())
 	numPlayers = childSnapshot.child('players').numChildren()
 	console.log('The value of numPlayers is: ' + numPlayers)
+
+	if (childSnapshot.child('players/player1').exists()) {
+		firstPlayer = childSnapshot.child('players/player1').val().name
+		console.log('The firstPlayer is ' + firstPlayer)
+		$('#player1Name').html(firstPlayer)
+	}
+	if (childSnapshot.child('players/player2').exists()) {
+		secondPlayer = childSnapshot.child('players/player2').val().name
+		console.log('The secondPlayer is ' + secondPlayer)
+		$('#player2Name').html(secondPlayer)
+	}
+
+
+	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
+		yourPlayer = 'player2'
+	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
+		yourPlayer = 'player1'
+		currentPlayer = 'player2'
+	} else {
+		currentPlayer = 'player1'
+	}
+
+
 })
 
 // ============ LOGS VALUES OF PLAYER INPUTS ============
@@ -79,7 +101,7 @@ $(document).ready(function() {
 
 	
 	$('#addUser').on('click', function(event) {
-		if (numPlayers == 1) {
+		if (yourPlayer != undefined) {
 			$('#addUser').prop('disabled', true)
 			$('.input').prop('disabled', false)
 		}
@@ -89,8 +111,8 @@ $(document).ready(function() {
 		$('#userName').val('')
 
 		if (user != '') {
-			currentPlayer = player.concat(count)
-			count++
+			// currentPlayer = yourPlayer
+			
 
 			database.ref('players/' + currentPlayer).update({
 				"name": user,
