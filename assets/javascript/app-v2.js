@@ -5,6 +5,7 @@ var player = 'player'
 currentPlayer = ''
 var count = 1
 var numPlayers = 0
+var input = undefined
 
 function checkWhoWon(player1, player2) {
 	if (player2 == "Rock"){
@@ -63,6 +64,7 @@ function checkWhoWon(player1, player2) {
 firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	console.log('Number of players in database: ' + childSnapshot.child('players').numChildren())
 	numPlayers = childSnapshot.child('players').numChildren()
+	console.log('The value of numPlayers is: ' + numPlayers)
 })
 
 // ============ LOGS VALUES OF PLAYER INPUTS ============
@@ -75,29 +77,36 @@ firebase.database().ref('players').on('child_added', function(childSnapshot, pre
 $(document).ready(function() {
 	$('.input').prop('disabled', true)
 
-	if (numPlayers >= 2) {
-		$('#addUser').prop('disabled', true)
-	}
-
-
+	
 	$('#addUser').on('click', function(event) {
-		user = $('#userName').val()
+		if (numPlayers == 1) {
+			$('#addUser').prop('disabled', true)
+			$('.input').prop('disabled', false)
+		}
+
+		user = $('#userName').val().trim()
 		console.log('User is: ' + user)
 		$('#userName').val('')
 
-		currentPlayer = player.concat(count)
-		count++
+		if (user != '') {
+			currentPlayer = player.concat(count)
+			count++
 
-		database.ref('players/' + currentPlayer).update({
-			"name": user,
-			"wins": 0,
-			"loses": 0
-		})
+			database.ref('players/' + currentPlayer).update({
+				"name": user,
+				"wins": 0,
+				"loses": 0
+			})
+		} else {
+			console.log('User did not enter a value for name, please try again. Please a jquery function here later')
+		}
+
+		
 	})
 
 
 	$('.input').on('click', function(event) {
-		var input = $(event.target).html()
+		input = $(event.target).html()
 		console.log(input)
 	})
 })
