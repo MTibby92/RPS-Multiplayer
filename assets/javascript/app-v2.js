@@ -1,8 +1,9 @@
 var database = firebase.database()
+sessionStorage.clear()
 
 var user = undefined
 var player = 'player'
-currentPlayer = ''
+currentPlayer = undefined  //sessionStorage.getItem('currentPlayer')
 var count = 1
 var numPlayers = 0
 var input = undefined
@@ -78,14 +79,18 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 
 
 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
-		yourPlayer = 'player2'
+		// yourPlayer = 'player2'
 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
-		yourPlayer = 'player1'
 		currentPlayer = 'player2'
-	} else {
+		sessionStorage.setItem('currentPlayer', 'player2')
+	} else if (!childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
 		currentPlayer = 'player1'
+		sessionStorage.setItem('currentPlayer', 'player1')
+	} 
+	else {
+		currentPlayer = 'player1'
+		sessionStorage.setItem('currentPlayer', 'player1')
 	}
-
 
 })
 
@@ -101,9 +106,12 @@ $(document).ready(function() {
 
 	
 	$('#addUser').on('click', function(event) {
-		if (yourPlayer != undefined) {
+		if (currentPlayer == 'player1') {
 			$('#addUser').prop('disabled', true)
-			$('.input').prop('disabled', false)
+			$('.1').prop('disabled', false)
+		} else if (currentPlayer == "player2") {
+			$('#addUser').prop('disabled', true)
+			$('.2').prop('disabled', false)
 		}
 
 		user = $('#userName').val().trim()
@@ -131,4 +139,9 @@ $(document).ready(function() {
 		input = $(event.target).html()
 		console.log(input)
 	})
+
+	window.onbeforeunload = function(e) {
+		database.ref('players/' + currentPlayer).remove()
+		sessionStorage.clear()
+	}
 })
