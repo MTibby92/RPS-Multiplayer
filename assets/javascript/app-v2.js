@@ -76,8 +76,9 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 		console.log('The secondPlayer is ' + secondPlayer)
 		$('#player2Name').html(secondPlayer)
 	}
+})
 
-
+firebase.database().ref().once('value', function(childSnapshot, prevChildKey) {
 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
 		// yourPlayer = 'player2'
 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
@@ -143,11 +144,11 @@ $(document).ready(function() {
 	})
 
 	window.onbeforeunload = function(e) {
-		if (firstPlayer){
+		if (firstPlayer || currentPlayer == 'player1'){
 			database.ref('players/player1').remove()
 			sessionStorage.clear()
 		}
-		else if (secondPlayer) {
+		else if (secondPlayer || currentPlayer == 'player2') {
 			database.ref('players/player2').remove()
 			sessionStorage.clear()
 		}
