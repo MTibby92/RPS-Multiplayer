@@ -109,9 +109,11 @@ $(document).ready(function() {
 		if (currentPlayer == 'player1') {
 			$('#addUser').prop('disabled', true)
 			$('.1').prop('disabled', false)
+			firstPlayer = true
 		} else if (currentPlayer == "player2") {
 			$('#addUser').prop('disabled', true)
 			$('.2').prop('disabled', false)
+			firstPlayer = true
 		}
 
 		user = $('#userName').val().trim()
@@ -141,7 +143,13 @@ $(document).ready(function() {
 	})
 
 	window.onbeforeunload = function(e) {
-		database.ref('players/' + currentPlayer).remove()
-		sessionStorage.clear()
+		if (firstPlayer){
+			database.ref('players/player1').remove()
+			sessionStorage.clear()
+		}
+		else if (secondPlayer) {
+			database.ref('players/player2').remove()
+			sessionStorage.clear()
+		}
 	}
 })
