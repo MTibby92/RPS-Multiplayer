@@ -103,13 +103,20 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	if (childSnapshot.child('players/player1/choice').exists()) {
 		$('#player1Chosen p').html('Choice Made')
 		$('.1').prop('disabled', true)
+	} else if (!childSnapshot.child('players/player1/choice').exists() && currentPlayer == 'player1') {
+		$('#player1Chosen p').html('Waiting')
+		$('.1').prop('disabled', false)
+		$('.2').prop('disabled', true)
 	} else {
 		$('#player1Chosen p').html('Waiting')
 	}
 	if (childSnapshot.child('players/player2/choice').exists()) {
 		$('#player2Chosen p').html('Choice Made')
 		$('.2').prop('disabled', true)
-		
+	} else if (!childSnapshot.child('players/player2/choice').exists() && currentPlayer == 'player2') {
+		$('#player2Chosen p').html('Waiting')
+		$('.2').prop('disabled', false)
+		$('.1').prop('disabled', true)
 	} else {
 		$('#player2Chosen p').html('Waiting')
 	}
