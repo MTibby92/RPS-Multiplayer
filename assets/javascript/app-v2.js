@@ -180,6 +180,12 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 $(document).ready(function() {
 	$('.input').prop('disabled', true)
 
+	$("#userName").keyup(function(event){
+    if(event.keyCode == 13){
+        $("#addUser").click();
+    }
+});
+
 	
 	$('#addUser').on('click', function(event) {
 		// currentPlayer = localStorage.getItem('currentPlayer')
