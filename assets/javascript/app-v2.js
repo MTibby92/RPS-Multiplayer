@@ -1,5 +1,5 @@
 var database = firebase.database()
-localStorage.clear()
+// localStorage.clear()
 
 var user = undefined
 var player = 'player'
@@ -187,21 +187,22 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 
 // ============ ESTABLISHES IF PLAYER 1 OR 2 ============
 // firebase.database().ref().once('value', function(childSnapshot, prevChildKey) {
-// 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
-// 		// yourPlayer = 'player2'
-// 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
-// 		// currentPlayer = 'player2'
-// 		localStorage.setItem('currentPlayer', 'player2')
-// 	} else if (!childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
-// 		localStorage.setItem('currentPlayer', 'player1')
-// 		// currentPlayer = 'player1'
-// 	} 
-// 	else {
-// 		// currentPlayer = 'player1'
-// 		localStorage.setItem('currentPlayer', 'player1')
-// 	}
+// 	if (currentPlayer)
+// // 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
+// // 		// yourPlayer = 'player2'
+// // 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
+// // 		// currentPlayer = 'player2'
+// // 		localStorage.setItem('currentPlayer', 'player2')
+// // 	} else if (!childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
+// // 		localStorage.setItem('currentPlayer', 'player1')
+// // 		// currentPlayer = 'player1'
+// // 	} 
+// // 	else {
+// // 		// currentPlayer = 'player1'
+// // 		localStorage.setItem('currentPlayer', 'player1')
+// // 	}
 
-// 	currentPlayer = localStorage.getItem('currentPlayer')
+// // 	currentPlayer = localStorage.getItem('currentPlayer')
 
 // })
 
@@ -228,6 +229,7 @@ $(document).ready(function() {
 			//secondPlayer = true
 		} else { //added this else block
 			currentPlayer = 'player1'
+			localStorage.setItem('currentPlayer', 'player1')
 			$('#addUser').prop('disabled', true)
 			$('.1').prop('disabled', false)
 		}
@@ -285,6 +287,34 @@ $(document).ready(function() {
 			$('#win2').html('0')
 			$('#lose2').html('0')
 			localStorage.clear()
+		} else {
+			database.ref('players/player1').remove()
+			$('#win1').html('0')
+			$('#lose1').html('0')
+			localStorage.clear()
 		}
 	}
+	// if(window.performance) {
+	// 	if(performance.navigation.type  == 1 || performance.navigation.type  == 0 || performance.navigation.type  == 255 || performance.navigation.type  == 2) {
+	// 		currentPlayer = localStorage.getItem('currentPlayer')
+	// 		alert('page reloaded');
+	// 		if (currentPlayer == 'player1'){
+	// 			database.ref('players/player1').remove()
+	// 			$('#win1').html('0')
+	// 			$('#lose1').html('0')
+	// 			localStorage.clear()
+	// 		}
+	// 		else if (currentPlayer == 'player2') {
+	// 			database.ref('players/player2').remove()
+	// 			$('#win2').html('0')
+	// 			$('#lose2').html('0')
+	// 			localStorage.clear()
+	// 		} else {
+	// 			database.ref('players/player1').remove()
+	// 			$('#win1').html('0')
+	// 			$('#lose1').html('0')
+	// 			localStorage.clear()
+	// 		}
+	// 	}
+	// }
 })
