@@ -102,17 +102,22 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 
 	if (childSnapshot.child('players/player1/choice').exists()) {
 		$('#player1Chosen p').html('Choice Made')
+		$('.1').prop('disabled', true)
 	} else {
 		$('#player1Chosen p').html('Waiting')
 	}
 	if (childSnapshot.child('players/player2/choice').exists()) {
 		$('#player2Chosen p').html('Choice Made')
+		$('.2').prop('disabled', true)
+		
+	} else {
 		$('#player2Chosen p').html('Waiting')
 	}
 
 
 
 	if (childSnapshot.child('players/player1/choice').exists() && childSnapshot.child('players/player2/choice').exists()) {
+
 		var choice1 = childSnapshot.child('players/player1/choice').val()
 		var choice2 = childSnapshot.child('players/player2/choice').val()
 
@@ -246,7 +251,7 @@ $(document).ready(function() {
 			"choice": input
 		})
 		input = undefined
-		$('.1').prop('disabled', true)
+		// $('.1').prop('disabled', true)
 	})
 
 	$('.2').on('click', function(event) {
@@ -256,7 +261,7 @@ $(document).ready(function() {
 			"choice": input
 		})
 		input = undefined
-		$('.2').prop('disabled', true)
+		// $('.2').prop('disabled', true)
 	})
 
 	window.onbeforeunload = function(e) {
