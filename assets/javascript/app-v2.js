@@ -100,6 +100,18 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	}
 
 
+	if (childSnapshot.child('players/player1/choice').exists()) {
+		$('#player1Chosen p').html('Choice Made')
+	} else {
+		$('#player1Chosen p').html('Waiting')
+	}
+	if (childSnapshot.child('players/player2/choice').exists()) {
+		$('#player2Chosen p').html('Choice Made')
+		$('#player2Chosen p').html('Waiting')
+	}
+
+
+
 	if (childSnapshot.child('players/player1/choice').exists() && childSnapshot.child('players/player2/choice').exists()) {
 		var choice1 = childSnapshot.child('players/player1/choice').val()
 		var choice2 = childSnapshot.child('players/player2/choice').val()
@@ -124,6 +136,8 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 		var result = checkWhoWon(choice1, choice2)
 		choice1 = undefined
 		choice2 = undefined
+		$('.1').prop('disabled', false)
+		$('.2').prop('disabled', false)
 		if (result == 'Win') {
 			wins1++
 			loses2++
@@ -153,8 +167,6 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 			$('#lose1').html(loses1)
 			$('#win2').html(wins2)
 		}
-		$('.1').prop('disabled', false)
-		$('.2').prop('disabled', false)
 	}
 })
 
@@ -233,7 +245,6 @@ $(document).ready(function() {
 		database.ref('players/player1').update({
 			"choice": input
 		})
-		$('#player1Chosen p').html('Choice Made')
 		input = undefined
 		$('.1').prop('disabled', true)
 	})
@@ -244,7 +255,6 @@ $(document).ready(function() {
 		database.ref('players/player2').update({
 			"choice": input
 		})
-		$('#player2Chosen p').html('Choice Made')
 		input = undefined
 		$('.2').prop('disabled', true)
 	})
