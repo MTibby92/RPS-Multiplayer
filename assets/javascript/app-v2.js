@@ -1,4 +1,5 @@
 var database = firebase.database()
+// localStorage.clear()
 
 var user = undefined
 var player = 'player'
@@ -6,6 +7,8 @@ currentPlayer = undefined // localStorage.getItem('currentPlayer')
 var count = 1
 var numPlayers = 0
 var input = undefined
+var firstPlayer = undefined
+var secondPlayer = undefined
 
 var yourPlayer = undefined
 
@@ -55,7 +58,7 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	console.log('The value of numPlayers is: ' + numPlayers)
 
 
-	// BETTER WAY TO ASSIGN CURRENT PLAYER
+	// TESTING BETTER WAY TO ASSIGN CURRENT PLAYER SUCH THAT IT WAITS 
 	if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists() && currentPlayer == undefined) {
 		localStorage.setItem('currentPlayer', 'player2')
 		currentPlayer = localStorage.getItem('currentPlayer')
@@ -66,7 +69,19 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 
 
 
-	// FOR THE CASE OF PLAYERS LEAVING, RESETTING HTML DISPLAYS TO INITIAL
+
+	if (childSnapshot.child('players/player1').exists()) {
+		firstPlayer = childSnapshot.child('players/player1').val().name
+		console.log('The firstPlayer is ' + firstPlayer)
+		$('#player1Name').html(firstPlayer)
+	}
+	if (childSnapshot.child('players/player2').exists()) {
+		secondPlayer = childSnapshot.child('players/player2').val().name
+		console.log('The secondPlayer is ' + secondPlayer)
+		$('#player2Name').html(secondPlayer)
+	}
+
+	// FOR THE CASE OF PLAYERS LEAVING, RESETTING DISPLAYS TO 0
 	if (!childSnapshot.child('players/player1/wins').exists()) {
 		$('#win1').html('0')
 		$('#lose1').html('0')
@@ -84,7 +99,7 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 		$('#lose2').html(childSnapshot.child('players/player2/loses').val())
 	}
 
-	// HANDLES HTML FOR WAITING ON PLAYERS AND BUTTON ACTIVATIONS
+
 	if (childSnapshot.child('players/player1/choice').exists()) {
 		$('#player1Chosen p').html('Choice Made')
 		$('.1').prop('disabled', true)
@@ -107,7 +122,7 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 	}
 
 
-	// REGISTERS WHEN BOTH USERS HAVE SUBMITTED AND DECIDES WHO WINS, EDITS THE HTML AND DATABASE
+
 	if (childSnapshot.child('players/player1/choice').exists() && childSnapshot.child('players/player2/choice').exists()) {
 
 		var choice1 = childSnapshot.child('players/player1/choice').val()
@@ -126,6 +141,9 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 
 		var loses1 = childSnapshot.child('players/player1/loses').val()
 		var loses2 = childSnapshot.child('players/player2/loses').val()
+
+		// console.log('Value of Choice 1 is: ' + choice1)
+		// console.log('Value of Choice 2 is: ' + choice2)
 
 		var result = checkWhoWon(choice1, choice2)
 		choice1 = undefined
@@ -165,6 +183,36 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 })
 
 
+//commented this out
+
+// ============ ESTABLISHES IF PLAYER 1 OR 2 ============
+// firebase.database().ref().once('value', function(childSnapshot, prevChildKey) {
+// 	if (currentPlayer)
+// // 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
+// // 		// yourPlayer = 'player2'
+// // 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
+// // 		// currentPlayer = 'player2'
+// // 		localStorage.setItem('currentPlayer', 'player2')
+// // 	} else if (!childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
+// // 		localStorage.setItem('currentPlayer', 'player1')
+// // 		// currentPlayer = 'player1'
+// // 	} 
+// // 	else {
+// // 		// currentPlayer = 'player1'
+// // 		localStorage.setItem('currentPlayer', 'player1')
+// // 	}
+
+// // 	currentPlayer = localStorage.getItem('currentPlayer')
+
+// })
+
+// ============ LOGS VALUES OF PLAYER INPUTS ============
+firebase.database().ref('players').on('child_added', function(childSnapshot, prevChildKey) {
+	console.log(childSnapshot.val())
+	console.log(childSnapshot.val().name)
+})
+
+
 $(document).ready(function() {
 	$('.input').prop('disabled', true)
 
@@ -174,9 +222,11 @@ $(document).ready(function() {
 		if (currentPlayer == 'player1') {
 			$('#addUser').prop('disabled', true)
 			$('.1').prop('disabled', false)
+			// firstPlayer = true
 		} else if (currentPlayer == 'player2') {
 			$('#addUser').prop('disabled', true)
 			$('.2').prop('disabled', false)
+			//secondPlayer = true
 		} else { //added this else block
 			currentPlayer = 'player1'
 			localStorage.setItem('currentPlayer', 'player1')
@@ -244,4 +294,27 @@ $(document).ready(function() {
 			localStorage.clear()
 		}
 	}
+	// if(window.performance) {
+	// 	if(performance.navigation.type  == 1 || performance.navigation.type  == 0 || performance.navigation.type  == 255 || performance.navigation.type  == 2) {
+	// 		currentPlayer = localStorage.getItem('currentPlayer')
+	// 		alert('page reloaded');
+	// 		if (currentPlayer == 'player1'){
+	// 			database.ref('players/player1').remove()
+	// 			$('#win1').html('0')
+	// 			$('#lose1').html('0')
+	// 			localStorage.clear()
+	// 		}
+	// 		else if (currentPlayer == 'player2') {
+	// 			database.ref('players/player2').remove()
+	// 			$('#win2').html('0')
+	// 			$('#lose2').html('0')
+	// 			localStorage.clear()
+	// 		} else {
+	// 			database.ref('players/player1').remove()
+	// 			$('#win1').html('0')
+	// 			$('#lose1').html('0')
+	// 			localStorage.clear()
+	// 		}
+	// 	}
+	// }
 })
