@@ -245,13 +245,14 @@ $(document).ready(function() {
 
 
 	$('.1').on('click', function(event) {
+
 		input = $(event.target).html()
 		console.log(input)
 		database.ref('players/player1').update({
 			"choice": input
 		})
 		input = undefined
-		// $('.1').prop('disabled', true)
+		$('.2').prop('disabled', true)
 	})
 
 	$('.2').on('click', function(event) {
@@ -261,7 +262,7 @@ $(document).ready(function() {
 			"choice": input
 		})
 		input = undefined
-		// $('.2').prop('disabled', true)
+		$('.1').prop('disabled', true)
 	})
 
 	window.onbeforeunload = function(e) {
