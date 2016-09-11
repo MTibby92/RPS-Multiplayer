@@ -1,9 +1,9 @@
 var database = firebase.database()
-sessionStorage.clear()
+localStorage.clear()
 
 var user = undefined
 var player = 'player'
-currentPlayer = undefined  //sessionStorage.getItem('currentPlayer')
+currentPlayer = localStorage.getItem('currentPlayer')
 var count = 1
 var numPlayers = 0
 var input = undefined
@@ -15,44 +15,35 @@ var yourPlayer = undefined
 function checkWhoWon(player1, player2) {
 	if (player2 == "Rock"){
 		if (player1 == "Rock"){
-			ties = ties + 1
-			alert("You tied!")
+			return('Tie')
 
 		}else if (player1 == "Paper"){
-			wins = wins +1
-			alert("You won!")
+			return('Win')
 
 		}else if (player1 == "Scissors"){
-			loses = loses + 1
-			alert("You lost!")
+			return('Lose')
 
 		}
 	}else if (player2 == "Paper"){
 		if (player1 == "Rock"){
-			loses = loses + 1
-			alert("You lost!")
+			return('Lose')
 
 		}else if (player1 == "Paper"){
-			ties = ties + 1
-			alert("You tied!")
+			return('Tie')
 
 		}else if (player1 == "Scissors"){
-			wins = wins + 1
-			alert("You won!")
+			return('Win')
 
 		}
 	}else if (player2 == "Scissors" ){
 		if (player1 == "Rock"){
-			wins = wins + 1
-			alert("You won!")
+			return('Win')
 
 		}else if (player1 == "Paper"){
-			loses = loses + 1
-			alert("You lost!")
+			return('Lose')
 
 		}else if (player1 == "Scissors"){
-			ties = ties + 1
-			alert("You tied!")
+			return('Tie')
 
 		}
 	}
@@ -76,21 +67,96 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 		console.log('The secondPlayer is ' + secondPlayer)
 		$('#player2Name').html(secondPlayer)
 	}
+
+	// FOR THE CASE OF PLAYERS LEAVING, RESETTING DISPLAYS TO 0
+	if (!childSnapshot.child('players/player1/wins').exists()) {
+		$('#win1').html('0')
+		$('#lose1').html('0')
+		$('#player1Name').html('Waiting for an Opponent')
+	} else {
+		$('#win1').html(childSnapshot.child('players/player1/wins').val())
+		$('#lose1').html(childSnapshot.child('players/player1/loses').val())
+	}
+	if (!childSnapshot.child('players/player2/wins').exists()) {
+		$('#win2').html('0')
+		$('#lose2').html('0')
+		$('#player2Name').html('Waiting for an Opponent')
+	} else {
+		$('#win2').html(childSnapshot.child('players/player2/wins').val())
+		$('#lose2').html(childSnapshot.child('players/player2/loses').val())
+	}
+
+
+	if (childSnapshot.child('players/player1/choice').exists() && childSnapshot.child('players/player2/choice').exists()) {
+		var choice1 = childSnapshot.child('players/player1/choice').val()
+		var choice2 = childSnapshot.child('players/player2/choice').val()
+
+		if (choice1 != undefined && choice2 != undefined) {
+			database.ref('players/player1/choice').remove()
+			database.ref('players/player2/choice').remove()
+		}
+
+		var wins1 = childSnapshot.child('players/player1/wins').val()
+		var wins2 = childSnapshot.child('players/player2/wins').val()
+
+		var loses1 = childSnapshot.child('players/player1/loses').val()
+		var loses2 = childSnapshot.child('players/player2/loses').val()
+
+		// console.log('Value of Choice 1 is: ' + choice1)
+		// console.log('Value of Choice 2 is: ' + choice2)
+
+		var result = checkWhoWon(choice1, choice2)
+		choice1 = undefined
+		choice2 = undefined
+		if (result == 'Win') {
+			wins1++
+			loses2++
+			database.ref('players/player1').update({
+				"wins": wins1
+			})
+			database.ref('players/player2').update({
+				"loses": loses2
+			})
+
+			$('#winner p').html('First Player Wins || Second Player Wins')
+			$('#win1').html(wins1)
+			$('#lose2').html(loses2)
+		} else if (result == 'Tie') {
+			$('#winner p').html('TIE!')
+		} else if (result == 'Lose') {
+			wins2++
+			loses1++
+			database.ref('players/player1').update({
+				"loses": loses1
+			})
+			database.ref('players/player2').update({
+				"wins": wins2
+			})
+
+			$('#winner p').html('First Player Loses || Second Player Wins')
+			$('#lose1').html(loses1)
+			$('#win2').html(wins2)
+		}
+	}
 })
 
+
+
+
+// ============ ESTABLISHES IF PLAYER 1 OR 2 ============
 firebase.database().ref().once('value', function(childSnapshot, prevChildKey) {
 	if (childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
 		// yourPlayer = 'player2'
 	} else if (childSnapshot.child('players/player1').exists() && !childSnapshot.child('players/player2').exists()) {
-		currentPlayer = 'player2'
-		sessionStorage.setItem('currentPlayer', 'player2')
+		// currentPlayer = 'player2'
+		localStorage.setItem('currentPlayer', 'player2')
 	} else if (!childSnapshot.child('players/player1').exists() && childSnapshot.child('players/player2').exists()) {
-		currentPlayer = 'player1'
-		sessionStorage.setItem('currentPlayer', 'player1')
+		localStorage.setItem('currentPlayer', 'player1')
+		// currentPlayer = 'player1'
 	} 
 	else {
-		currentPlayer = 'player1'
-		sessionStorage.setItem('currentPlayer', 'player1')
+		// currentPlayer = 'player1'
+		localStorage.setItem('currentPlayer', 'player1')
 	}
 
 })
@@ -107,14 +173,15 @@ $(document).ready(function() {
 
 	
 	$('#addUser').on('click', function(event) {
+		currentPlayer = localStorage.getItem('currentPlayer')
 		if (currentPlayer == 'player1') {
 			$('#addUser').prop('disabled', true)
 			$('.1').prop('disabled', false)
-			firstPlayer = true
+			// firstPlayer = true
 		} else if (currentPlayer == "player2") {
 			$('#addUser').prop('disabled', true)
 			$('.2').prop('disabled', false)
-			firstPlayer = true
+			//secondPlayer = true
 		}
 
 		user = $('#userName').val().trim()
@@ -123,8 +190,6 @@ $(document).ready(function() {
 
 		if (user != '') {
 			// currentPlayer = yourPlayer
-			
-
 			database.ref('players/' + currentPlayer).update({
 				"name": user,
 				"wins": 0,
@@ -138,19 +203,37 @@ $(document).ready(function() {
 	})
 
 
-	$('.input').on('click', function(event) {
+	$('.1').on('click', function(event) {
 		input = $(event.target).html()
 		console.log(input)
+		database.ref('players/player1').update({
+			"choice": input
+		})
+		input = undefined
+	})
+
+	$('.2').on('click', function(event) {
+		input = $(event.target).html()
+		console.log(input)
+		database.ref('players/player2').update({
+			"choice": input
+		})
+		input = undefined
 	})
 
 	window.onbeforeunload = function(e) {
-		if (firstPlayer || currentPlayer == 'player1'){
+		currentPlayer = localStorage.getItem('currentPlayer')
+		if (currentPlayer == 'player1'){
 			database.ref('players/player1').remove()
-			sessionStorage.clear()
+			$('#win1').html('0')
+			$('#lose1').html('0')
+			localStorage.clear()
 		}
-		else if (secondPlayer || currentPlayer == 'player2') {
+		else if (currentPlayer == 'player2') {
 			database.ref('players/player2').remove()
-			sessionStorage.clear()
+			$('#win2').html('0')
+			$('#lose2').html('0')
+			localStorage.clear()
 		}
 	}
 })
