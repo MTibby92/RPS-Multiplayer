@@ -109,6 +109,9 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 			database.ref('players/player2/choice').remove()
 		}
 
+		var name1 = childSnapshot.child('players/player1/name').val()
+		var name2 = childSnapshot.child('players/player2/name').val()
+
 		var wins1 = childSnapshot.child('players/player1/wins').val()
 		var wins2 = childSnapshot.child('players/player2/wins').val()
 
@@ -131,7 +134,7 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 				"loses": loses2
 			})
 
-			$('#winner p').html('First Player Wins || Second Player Wins')
+			$('#winner p').html(name1 + ' wins!')
 			$('#win1').html(wins1)
 			$('#lose2').html(loses2)
 		} else if (result == 'Tie') {
@@ -146,10 +149,12 @@ firebase.database().ref().on('value', function(childSnapshot, prevChildKey) {
 				"wins": wins2
 			})
 
-			$('#winner p').html('First Player Loses || Second Player Wins')
+			$('#winner p').html(name2 + ' wins!')
 			$('#lose1').html(loses1)
 			$('#win2').html(wins2)
 		}
+		$('.1').prop('disabled', false)
+		$('.2').prop('disabled', false)
 	}
 })
 
@@ -228,7 +233,9 @@ $(document).ready(function() {
 		database.ref('players/player1').update({
 			"choice": input
 		})
+		$('#player1Chosen p').html('Choice Made')
 		input = undefined
+		$('.1').prop('disabled', true)
 	})
 
 	$('.2').on('click', function(event) {
@@ -237,7 +244,9 @@ $(document).ready(function() {
 		database.ref('players/player2').update({
 			"choice": input
 		})
+		$('#player2Chosen p').html('Choice Made')
 		input = undefined
+		$('.2').prop('disabled', true)
 	})
 
 	window.onbeforeunload = function(e) {
