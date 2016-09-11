@@ -159,6 +159,8 @@ firebase.database().ref().once('value', function(childSnapshot, prevChildKey) {
 		localStorage.setItem('currentPlayer', 'player1')
 	}
 
+	currentPlayer = localStorage.getItem('currentPlayer')
+
 })
 
 // ============ LOGS VALUES OF PLAYER INPUTS ============
