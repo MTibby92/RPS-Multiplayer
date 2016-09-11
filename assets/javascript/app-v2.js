@@ -272,7 +272,7 @@ $(document).ready(function() {
 		$('.1').prop('disabled', true)
 	})
 
-	window.onbeforeunload = function(e) {
+	window.onunload = function(e) {
 		currentPlayer = localStorage.getItem('currentPlayer')
 		if (currentPlayer == 'player1'){
 			database.ref('players/player1').remove()
